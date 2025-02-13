@@ -1,0 +1,1 @@
+ssh -i "~/.ssh/semil.pem" ubuntu@ec2-3-87-1-91.compute-1.amazonaws.com
