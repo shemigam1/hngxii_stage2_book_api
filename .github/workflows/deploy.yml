@@ -9,15 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ secrets.SERVER_IP }} << 'EOF'
+
             cd /home/ubuntu/hngxii_stage2_book_api
             git pull origin main
             source venv/bin/activate
             pip install -r requirements.txt
             sudo systemctl restart fastapi
             sudo systemctl restart nginx
+          EOF
+          rm -f private_key.pem
